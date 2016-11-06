@@ -36,7 +36,7 @@ module.exports.search = function search(options, callback) {
             return item != null;
           });
 
-          callback(null, tracksFound);
+          callback(null, uniqueTracks(tracksFound));
         });
       }
     }
@@ -64,8 +64,7 @@ function itunesLookup(search, country, limit, callback) {
     limit: limit,
   }, function (err, data) {
       if (err) {
-        // we failed to find the track, return it's default info
-        callback('Error finding songs', []);
+        callback(err, []);
       } else {
         var songs = data.results.map(function (result) {
           var song = {
@@ -85,3 +84,18 @@ function itunesLookup(search, country, limit, callback) {
     }
   );
 };
+
+function uniqueTracks(tracks) {
+  var unique = {};
+  var distinct = [];
+  for (var i in tracks) {
+    if (typeof (unique[tracks[i].youtubeId]) === 'undefined') {
+      distinct.push(tracks[i]);
+    }
+
+    unique[tracks[i].youtubeId] = 0;
+  }
+
+  console.log(distinct);
+  return distinct;
+}
